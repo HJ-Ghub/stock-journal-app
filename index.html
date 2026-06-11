@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- FIX_VERSION_20260611_RECOVERY_ONELINE_V2 -->
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
@@ -938,9 +939,173 @@
       .cloud-sync-panel .cloud-status { grid-column: 1 / -1; }
     }
 
+
+    /* 오늘의 기록 화면: 좌우 반반 배치 + 오른쪽 노트창 확장/팝업 사용 */
+    .today-split-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .today-left-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-width: 0;
+    }
+    .today-left-stack > .card,
+    .today-note-card {
+      min-width: 0;
+    }
+    .today-left-stack .today-compact-card {
+      min-height: auto;
+    }
+    .today-note-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 640px;
+    }
+    .today-note-card .inline-format-toolbar {
+      flex: 0 0 auto;
+    }
+    .today-note-editor {
+      flex: 1 1 auto;
+      min-height: 520px !important;
+      max-height: none !important;
+      height: auto;
+      resize: vertical;
+      overflow: auto;
+    }
+    .today-note-card .section-title {
+      flex: 0 0 auto;
+    }
+    @media (max-width: 900px) {
+      .today-split-layout {
+        grid-template-columns: 1fr;
+      }
+      .today-note-card {
+        min-height: 520px;
+      }
+      .today-note-editor {
+        min-height: 420px !important;
+      }
+    }
+
+
+    /* 추가 수정: 노트 펜그리기/펜메모 삭제/입력창 서식 보강 */
+    input, textarea, [contenteditable="true"] { -webkit-text-size-adjust: 100%; }
+    .rich-editor[contenteditable="true"] { -webkit-tap-highlight-color: transparent; }
+    .today-item-editor,
+    .watch-item-editor {
+      width: 100%;
+      min-height: 34px;
+      max-height: 86px;
+      overflow: auto;
+      border: 1px solid #cbdceb;
+      border-radius: 12px;
+      background: #fff;
+      padding: 7px 9px;
+      line-height: 1.35;
+      outline: none;
+      white-space: pre-wrap;
+      font-size: 12px;
+    }
+    .today-item-editor:focus,
+    .watch-item-editor:focus { border-color:#86bce9; box-shadow:0 0 0 3px rgba(134,188,233,.22); }
+    .today-item-editor:empty::before,
+    .watch-item-editor:empty::before { content: attr(data-placeholder); color:#9aa8b6; }
+    .task-row.done .today-item-editor { text-decoration: line-through; color:#91a0ad; background:#f5f7fa; }
+
+    /* 재수정: 추가 기록 입력칸은 기본 1줄 높이로 유지합니다. 카드 전체 크기는 변경하지 않습니다. */
+    .today-compact-card .today-item-editor,
+    .today-compact-card .watch-item-editor {
+      min-height: 34px !important;
+      height: 34px !important;
+      max-height: 34px !important;
+      padding-top: 7px !important;
+      padding-bottom: 7px !important;
+      line-height: 1.35 !important;
+      overflow-y: auto !important;
+      resize: none !important;
+    }
+    .today-compact-card .task-row,
+    .today-compact-card .watch-row {
+      align-items: center !important;
+    }
+    .note-draw-wrapper { position: relative; flex: 1 1 auto; min-height: 0; display:flex; }
+    .note-draw-wrapper .rich-editor { position: relative; z-index: 1; flex: 1 1 auto; }
+    .note-draw-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 6;
+      pointer-events: none;
+      border-radius: 12px;
+      touch-action: none;
+    }
+    .note-draw-wrapper.drawing .note-draw-canvas { pointer-events: auto; cursor: crosshair; box-shadow: inset 0 0 0 2px rgba(217,48,37,.32); }
+    .note-draw-wrapper.drawing .rich-editor { user-select: none; }
+    .note-draw-wrapper.has-drawing .note-draw-canvas { pointer-events: none; }
+    .note-draw-color { width: 28px !important; min-height: 22px !important; height: 22px !important; padding: 1px !important; }
+    .selected-handdraw { outline: 2px solid #d93025 !important; outline-offset: 2px; }
+    .handwrite-delete-btn { display:none; background:#fff2f2 !important; border-color:#f2b8b8 !important; color:#9a2525 !important; }
+    .handwrite-backdrop.editing .handwrite-delete-btn { display:inline-block; }
+    .modal.today-note-modal { width: min(1320px, 98vw); max-height: 97vh; }
+    .modal.today-note-modal .memo-rich-editor { min-height: 68vh !important; max-height: 78vh !important; }
+    .modal.today-note-modal .note-draw-wrapper { min-height: 68vh; }
+    .modal.today-note-modal .modal-actions { position: sticky; bottom: 0; background:#fff; padding-top:8px; }
+
+
+
+    /* 2026-06-11 재수정 확인: 추가 입력칸을 반드시 1줄 높이로 고정 */
+    .title-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .task-row .today-item-editor.rich-editor,
+    .watch-row .watch-item-editor.rich-editor,
+    .today-compact-card .task-row .today-item-editor.rich-editor,
+    .today-compact-card .watch-row .watch-item-editor.rich-editor {
+      box-sizing: border-box !important;
+      min-height: 30px !important;
+      height: 30px !important;
+      max-height: 30px !important;
+      padding: 4px 8px !important;
+      line-height: 20px !important;
+      overflow: hidden !important;
+      resize: none !important;
+      white-space: nowrap !important;
+      word-break: keep-all !important;
+    }
+    .task-row .today-item-editor.rich-editor br,
+    .watch-row .watch-item-editor.rich-editor br { display:none !important; }
+    .task-row .today-item-editor.rich-editor div,
+    .watch-row .watch-item-editor.rich-editor div,
+    .task-row .today-item-editor.rich-editor p,
+    .watch-row .watch-item-editor.rich-editor p { display:inline !important; margin:0 !important; padding:0 !important; }
+    .task-row,
+    .today-compact-card .task-row {
+      grid-template-columns: 30px minmax(0, 1fr) 60px !important;
+      align-items: center !important;
+      min-height: 34px !important;
+      margin-bottom: 6px !important;
+    }
+    .watch-row,
+    .today-compact-card .watch-row {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) 60px !important;
+      align-items: center !important;
+      min-height: 34px !important;
+      margin-bottom: 6px !important;
+    }
+    .today-note-modal .modal-head h3::after {
+      content: " · 큰창";
+      color: #6f7d8c;
+      font-size: 12px;
+    }
+
+
   </style>
 </head>
-<body>
+<body spellcheck="false">
   <header>
     <div class="wrap">
       <div class="titlebar">
@@ -948,7 +1113,10 @@
           <h1>📒 개인용 주식매매일지</h1>
           <div class="subtitle">키움증권 CSV 업로드 · 날짜별 기록 · 계좌별 성과 · 종목 이력 관리</div>
         </div>
-        <button class="btn-danger" data-action="reset-all">저장데이터 전체 초기화</button>
+        <div class="title-actions">
+          <button class="btn-primary" data-action="manual-recover-data" title="이 기기에 남아 있는 예전 저장기록을 찾아 현재 앱에 합칩니다.">이전기록 복구확인</button>
+          <button class="btn-danger" data-action="reset-all">저장데이터 전체 초기화</button>
+        </div>
       </div>
       <div class="cloud-sync-panel" aria-label="클라우드 동기화 설정">
         <input id="cloudSupabaseUrl" type="text" placeholder="Supabase URL" autocomplete="off" />
@@ -1022,10 +1190,12 @@
         <button type="button" data-action="handwrite-mode" data-mode="pen" class="active">펜</button>
         <button type="button" data-action="handwrite-mode" data-mode="highlighter">형광펜</button>
         <button type="button" data-action="handwrite-mode" data-mode="eraser">지우개</button>
-        <label>색상</label><input id="handwriteColor" type="color" value="#d93025" />
+        <label>펜색</label><input id="handwriteColor" type="color" value="#d93025" title="기본 펜색" />
+        <label>형광펜색</label><input id="handwriteHighlightColor" type="color" value="#fff176" title="기본 형광펜색" />
         <label>두께</label><input id="handwriteSize" type="range" min="2" max="36" value="5" />
         <button type="button" data-action="handwrite-undo">이전</button>
         <button type="button" data-action="handwrite-clear">전체삭제</button>
+        <button type="button" class="handwrite-delete-btn" data-action="handwrite-delete-image">선택 펜메모 삭제</button>
         <button type="button" class="btn-primary" data-action="handwrite-insert">기록창에 넣기</button>
       </div>
       <div class="hint">아이패드 애플펜슬/손가락/마우스로 쓸 수 있습니다. 삽입 후 기록창 안의 그림 모서리를 잡아 크기를 조절할 수 있고, 손글씨 그림을 더블클릭하면 다시 편집할 수 있습니다.</div>
@@ -1109,6 +1279,9 @@
     let handwriteLastPoint = null;
     let handwriteUndoStack = [];
     let handwriteEditImage = null;
+    let selectedHanddrawWrap = null;
+    let noteDrawState = { activeCanvas: null, drawing: false, lastPoint: null, color: '#d93025', size: 3 };
+    let pendingTodayFocus = null;
 
     function defaultUiStyle() {
       return {
@@ -1145,10 +1318,88 @@
       };
     }
 
+    function normalizeTodayTaskList(list) {
+      if (!Array.isArray(list)) return [];
+      return list.map(item => {
+        if (typeof item === 'string') {
+          return { done: false, text: item, textHtml: escMultiline(item) };
+        }
+        if (!item || typeof item !== 'object') return { done: false, text: '', textHtml: '' };
+        const text = String(item.text ?? item.title ?? item.value ?? '');
+        const textHtml = String(item.textHtml || item.html || (text ? escMultiline(text) : ''));
+        return Object.assign({}, item, { done: Boolean(item.done), text, textHtml });
+      });
+    }
+
+    function normalizeTodayWatchList(list) {
+      if (!Array.isArray(list)) return [];
+      return list.map(item => {
+        if (typeof item === 'string') {
+          return { name: item, nameHtml: escMultiline(item), reason: '', reasonHtml: '' };
+        }
+        if (!item || typeof item !== 'object') return { name: '', nameHtml: '', reason: '', reasonHtml: '' };
+        const name = String(item.name ?? item.stockName ?? item.title ?? '');
+        const reason = String(item.reason ?? item.memo ?? item.text ?? '');
+        const nameHtml = String(item.nameHtml || (name ? escMultiline(name) : ''));
+        const reasonHtml = String(item.reasonHtml || item.html || (reason ? escMultiline(reason) : ''));
+        return Object.assign({}, item, { name, nameHtml, reason, reasonHtml });
+      });
+    }
+
+    function normalizeTodayRecord(record, dateKey = '') {
+      const r = record && typeof record === 'object' ? record : {};
+      const date = r.date || dateKey || selectedDate || toYmd(new Date());
+      r.date = date;
+      r.weather = r.weather || WEATHER[0];
+      r.mood = r.mood || MOODS[0];
+      r.prep = normalizeTodayTaskList(r.prep);
+      r.todo = normalizeTodayTaskList(r.todo);
+      r.routine = normalizeTodayTaskList(r.routine);
+      r.watch = normalizeTodayWatchList(r.watch);
+      r.noteHtml = String(r.noteHtml || '');
+      r.noteText = String(r.noteText || plainFromHtml(r.noteHtml || ''));
+      r.noteDrawData = String(r.noteDrawData || '');
+      return r;
+    }
+
+    function normalizeRecordsForCompatibility(records) {
+      const out = {};
+      const src = records && typeof records === 'object' ? records : {};
+      Object.keys(src).forEach(date => {
+        out[date] = normalizeTodayRecord(src[date], date);
+      });
+      return out;
+    }
+
+    function recordHasMeaningfulEntries(record) {
+      const r = record && typeof record === 'object' ? record : {};
+      return (Array.isArray(r.prep) && r.prep.length > 0)
+        || (Array.isArray(r.todo) && r.todo.length > 0)
+        || (Array.isArray(r.routine) && r.routine.length > 0)
+        || (Array.isArray(r.watch) && r.watch.length > 0)
+        || String(r.noteHtml || '').trim().length > 0
+        || String(r.noteText || '').trim().length > 0
+        || String(r.noteDrawData || '').trim().length > 0;
+    }
+
+    function isMeaningfulAppData(candidate) {
+      const data = candidate && typeof candidate === 'object' ? candidate : {};
+      const records = data.records && typeof data.records === 'object' ? data.records : {};
+      const meaningfulRecordCount = Object.keys(records).filter(date => recordHasMeaningfulEntries(records[date])).length;
+      return meaningfulRecordCount > 0
+        || (Array.isArray(data.trades) && data.trades.length > 0)
+        || (Array.isArray(data.balances) && data.balances.length > 0)
+        || (data.memos && typeof data.memos === 'object' && Object.keys(data.memos).length > 0)
+        || (data.memoHtml && typeof data.memoHtml === 'object' && Object.keys(data.memoHtml).length > 0)
+        || (Array.isArray(data.watchExtras) && data.watchExtras.length > 0)
+        || (Array.isArray(data.noteExtras) && data.noteExtras.length > 0)
+        || (Array.isArray(data.memoManuals) && data.memoManuals.length > 0);
+    }
+
     function normalizeLoadedApp(parsed) {
       parsed = parsed && typeof parsed === 'object' ? parsed : {};
       return Object.assign(emptyApp(), parsed, {
-        records: parsed.records || {},
+        records: normalizeRecordsForCompatibility(parsed.records || {}),
         trades: Array.isArray(parsed.trades) ? parsed.trades : [],
         balances: Array.isArray(parsed.balances) ? parsed.balances : [],
         memos: parsed.memos || {},
@@ -1243,17 +1494,9 @@
     }
 
     function cleanupLargeLocalStorage() {
-      try {
-        for (let i = localStorage.length - 1; i >= 0; i--) {
-          const key = localStorage.key(i);
-          if (!key) continue;
-          if (key === STORAGE_KEY || /FULL_BACKUP|PATCHED_SAVE|BACKUP/i.test(key)) {
-            localStorage.removeItem(key);
-          }
-        }
-      } catch (e) {
-        console.warn(e);
-      }
+      // 이전 기록 복구 가능성을 위해 기존 localStorage 백업은 자동 삭제하지 않습니다.
+      // IndexedDB 저장 실패를 막기 위한 정리는 사용자가 전체 초기화를 선택했을 때만 수행합니다.
+      return true;
     }
 
     function classifyStorageError(err) {
@@ -1498,20 +1741,168 @@
       }
     }
 
+    function readLegacyAppFromLocalStorage() {
+      try {
+        const candidates = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (!key) continue;
+          if (key === STORAGE_KEY || /stockDiaryMiniApp|FULL_BACKUP|PATCHED_SAVE|BACKUP/i.test(key)) {
+            const raw = localStorage.getItem(key);
+            if (!raw || raw.length < 10) continue;
+            try {
+              const parsed = JSON.parse(raw);
+              if (isMeaningfulAppData(parsed)) candidates.push({ key, data: parsed, length: raw.length });
+            } catch (err) { /* 해당 키는 앱 데이터가 아닐 수 있습니다. */ }
+          }
+        }
+        candidates.sort((a, b) => b.length - a.length);
+        return candidates[0] || null;
+      } catch (e) {
+        console.warn('이전 localStorage 기록 확인 실패', e);
+        return null;
+      }
+    }
+
+
+    function uniqueByJson(list) {
+      const seen = new Set();
+      return (Array.isArray(list) ? list : []).filter(item => {
+        const key = JSON.stringify(item || {});
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
+    function mergeTodayTaskLists(current, recovered) {
+      const cur = normalizeTodayTaskList(current || []);
+      const old = normalizeTodayTaskList(recovered || []);
+      const seen = new Set(cur.map(item => normalizeText(`${item.text || ''} ${plainFromHtml(item.textHtml || '')}`)));
+      old.forEach(item => {
+        const key = normalizeText(`${item.text || ''} ${plainFromHtml(item.textHtml || '')}`);
+        if (key && !seen.has(key)) {
+          cur.push(item);
+          seen.add(key);
+        }
+      });
+      return cur;
+    }
+
+    function mergeTodayWatchLists(current, recovered) {
+      const cur = normalizeTodayWatchList(current || []);
+      const old = normalizeTodayWatchList(recovered || []);
+      const seen = new Set(cur.map(item => normalizeText(`${item.name || ''} ${item.reason || ''} ${plainFromHtml(item.nameHtml || '')} ${plainFromHtml(item.reasonHtml || '')}`)));
+      old.forEach(item => {
+        const key = normalizeText(`${item.name || ''} ${item.reason || ''} ${plainFromHtml(item.nameHtml || '')} ${plainFromHtml(item.reasonHtml || '')}`);
+        if (key && !seen.has(key)) {
+          cur.push(item);
+          seen.add(key);
+        }
+      });
+      return cur;
+    }
+
+    function mergeRecoveredApp(currentApp, recoveredApp) {
+      const cur = normalizeLoadedApp(currentApp || {});
+      const old = normalizeLoadedApp(recoveredApp || {});
+      Object.keys(old.records || {}).forEach(date => {
+        const oldRec = normalizeTodayRecord(old.records[date], date);
+        const curRec = cur.records[date] ? normalizeTodayRecord(cur.records[date], date) : normalizeTodayRecord({}, date);
+        curRec.weather = curRec.weather || oldRec.weather || WEATHER[0];
+        curRec.mood = curRec.mood || oldRec.mood || MOODS[0];
+        curRec.prep = mergeTodayTaskLists(curRec.prep, oldRec.prep);
+        curRec.todo = mergeTodayTaskLists(curRec.todo, oldRec.todo);
+        curRec.routine = mergeTodayTaskLists(curRec.routine, oldRec.routine);
+        curRec.watch = mergeTodayWatchLists(curRec.watch, oldRec.watch);
+        if (!String(curRec.noteHtml || curRec.noteText || '').trim() && String(oldRec.noteHtml || oldRec.noteText || '').trim()) {
+          curRec.noteHtml = oldRec.noteHtml;
+          curRec.noteText = oldRec.noteText;
+        }
+        if (!String(curRec.noteDrawData || '').trim() && String(oldRec.noteDrawData || '').trim()) {
+          curRec.noteDrawData = oldRec.noteDrawData;
+        }
+        cur.records[date] = curRec;
+      });
+      ['trades','balances','watchExtras','noteExtras','memoManuals','customFonts','formatRecents','accounts','deletedAccountOrigins'].forEach(key => {
+        cur[key] = uniqueByJson([...(old[key] || []), ...(cur[key] || [])]);
+      });
+      ['memos','memoHtml','opinionHistory','opinion1','opinion2','memoDetails','dailyDetailExtras','memoFieldExtras','dailyHistoryChecks','classTags'].forEach(key => {
+        cur[key] = Object.assign({}, old[key] || {}, cur[key] || {});
+      });
+      cur.uiStyle = Object.assign(defaultUiStyle(), old.uiStyle || {}, cur.uiStyle || {});
+      return normalizeLoadedApp(cur);
+    }
+
+    function countAppData(data) {
+      const a = normalizeLoadedApp(data || {});
+      const records = Object.keys(a.records || {}).filter(date => recordHasMeaningfulEntries(a.records[date])).length;
+      return {
+        records,
+        trades: Array.isArray(a.trades) ? a.trades.length : 0,
+        balances: Array.isArray(a.balances) ? a.balances.length : 0,
+        memos: Object.keys(a.memos || {}).length + Object.keys(a.memoHtml || {}).length,
+        extras: (a.watchExtras || []).length + (a.noteExtras || []).length + (a.memoManuals || []).length
+      };
+    }
+
+    function countText(c) {
+      return `날짜기록 ${fmtNum(c.records)}개 · 매매 ${fmtNum(c.trades)}묶음 · 잔고 ${fmtNum(c.balances)}묶음 · 메모 ${fmtNum(c.memos)}개 · 추가기록 ${fmtNum(c.extras)}개`;
+    }
+
+    async function manualRecoverData() {
+      const legacy = readLegacyAppFromLocalStorage();
+      if (!legacy) {
+        alert(`이 기기 안의 예전 localStorage 백업 기록을 찾지 못했습니다.
+
+클라우드에 저장한 적이 있다면 먼저 로그인 후 [동기화]를 눌러서 클라우드 데이터를 불러와 주세요.`);
+        return;
+      }
+      const oldCounts = countAppData(legacy.data);
+      const curCounts = countAppData(app);
+      const ok = confirm(`이전 저장기록을 찾았습니다.
+
+찾은 위치: ${legacy.key}
+찾은 기록: ${countText(oldCounts)}
+현재 기록: ${countText(curCounts)}
+
+[확인]을 누르면 이전 기록을 현재 앱에 합쳐 복구합니다.
+현재 기록은 지우지 않고, 빠진 기록만 최대한 합칩니다.`);
+      if (!ok) return;
+      app = mergeRecoveredApp(app, legacy.data);
+      await idbPut(DB_APP_KEY, app);
+      saveSmallSettings();
+      normalizeAccounts();
+      render();
+      toast('이전기록 복구/합치기 완료');
+      alert(`복구 시도가 완료되었습니다.
+
+${countText(countAppData(app))}
+
+보이지 않는 기록이 있으면, 클라우드 동기화에 남아 있는지도 확인해 주세요.`);
+    }
+
     async function loadApp() {
       try {
         const stored = await idbGet(DB_APP_KEY);
+        const legacy = readLegacyAppFromLocalStorage();
         if (stored) {
+          const normalized = normalizeLoadedApp(stored);
+          if (!isMeaningfulAppData(normalized) && legacy) {
+            const recovered = normalizeLoadedApp(legacy.data);
+            await idbPut(DB_APP_KEY, recovered);
+            console.info(`이전 localStorage 기록(${legacy.key})을 복구했습니다.`);
+            return recovered;
+          }
           cleanupLargeLocalStorage();
-          return normalizeLoadedApp(stored);
+          return normalized;
         }
 
-        const oldRaw = localStorage.getItem(STORAGE_KEY);
-        if (oldRaw) {
-          const migrated = normalizeLoadedApp(JSON.parse(oldRaw));
+        if (legacy) {
+          const migrated = normalizeLoadedApp(legacy.data);
           await idbPut(DB_APP_KEY, migrated);
           cleanupLargeLocalStorage();
-          console.info('기존 localStorage 데이터를 IndexedDB로 마이그레이션했습니다.');
+          console.info(`기존 localStorage 데이터(${legacy.key})를 IndexedDB로 마이그레이션했습니다.`);
           return migrated;
         }
         cleanupLargeLocalStorage();
@@ -2117,8 +2508,11 @@
           routine: [],
           watch: [],
           noteHtml: '',
-          noteText: ''
+          noteText: '',
+          noteDrawData: ''
         };
+      } else {
+        app.records[date] = normalizeTodayRecord(app.records[date], date);
       }
       return app.records[date];
     }
@@ -2448,39 +2842,48 @@
         root.innerHTML = `<div class="card danger-zone"><h2>화면을 여는 중 오류가 발생했습니다.</h2><div class="hint">다른 탭으로 이동하거나 새로고침 후 다시 시도해 주세요.</div><pre style="white-space:pre-wrap;font-size:11px">${esc(err && err.message ? err.message : err)}</pre></div>`;
       }
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === currentTab));
-      requestAnimationFrame(fitAllMoneyInputsToBox);
+      requestAnimationFrame(() => {
+        fitAllMoneyInputsToBox();
+        initNoteDrawCanvases();
+        disableSpellcheck();
+        focusPendingTodayEditor();
+      });
     }
 
     function renderToday() {
       const record = ensureRecord(selectedDate);
       root.innerHTML = `
-        <div class="grid">
-          <section class="card soft">
-            <div class="section-title">
-              <h2>오늘의 기록</h2>
-              <span class="hint">선택한 날짜 기준으로만 저장됩니다.</span>
-            </div>
-            <div class="form-row">
-              <div class="field"><label for="recordDate">날짜</label><input id="recordDate" type="date" value="${esc(selectedDate)}" /></div>
-              <div class="field"><label>요일</label><input type="text" value="${weekday(selectedDate)}" readonly /></div>
-              <div class="field"><label for="weatherSelect">날씨</label><select id="weatherSelect">${optionHtml(WEATHER, record.weather)}</select></div>
-              <div class="field"><label for="moodSelect">기분</label><select id="moodSelect">${optionHtml(MOODS, record.mood)}</select></div>
-            </div>
-          </section>
-          <section class="grid grid-3">
+        <section class="today-split-layout" aria-label="오늘의 기록 좌우 분할 화면">
+          <div class="today-left-stack">
+            <section class="card soft today-main-card">
+              <div class="section-title">
+                <h2>오늘의 기록</h2>
+                <span class="hint">선택한 날짜 기준으로만 저장됩니다.</span>
+              </div>
+              <div class="form-row">
+                <div class="field"><label for="recordDate">날짜</label><input id="recordDate" type="date" value="${esc(selectedDate)}" /></div>
+                <div class="field"><label>요일</label><input type="text" value="${weekday(selectedDate)}" readonly /></div>
+                <div class="field"><label for="weatherSelect">날씨</label><select id="weatherSelect">${optionHtml(WEATHER, record.weather)}</select></div>
+                <div class="field"><label for="moodSelect">기분</label><select id="moodSelect">${optionHtml(MOODS, record.mood)}</select></div>
+              </div>
+            </section>
             ${renderTaskSection('prep', '장준비')}
             ${renderTaskSection('todo', '할일')}
             ${renderTaskSection('routine', '루틴')}
-          </section>
-          <section class="grid today-secondary-grid">
             ${renderWatchSection()}
-            <div class="card today-compact-card">
-              <div class="section-title"><h3>노트</h3><span class="tiny">자동 저장 · 드래그 서식 가능</span></div>
-              ${renderFormatToolbarInline()}
-              <div id="noteText" class="rich-editor" contenteditable="true" data-action="rich-note" data-placeholder="오늘 매매 전후 생각, 실수, 배운 점을 적어보세요." title="더블클릭하면 큰 팝업 기록창이 열립니다.">${renderRichContent(record.noteHtml, record.noteText)}</div>
+          </div>
+          <aside class="card today-note-card">
+            <div class="section-title">
+              <h3>노트</h3>
+              <span class="tiny">자동 저장 · 창 크기 조절 가능 · 더블클릭 시 큰창</span>
             </div>
-          </section>
-        </div>
+            ${renderFormatToolbarInline()}
+            <div class="note-draw-wrapper ${record.noteDrawData ? 'has-drawing' : ''}" data-note-draw-wrapper="today" data-date="${esc(selectedDate)}">
+              <div id="noteText" class="rich-editor today-note-editor" contenteditable="true" spellcheck="false" data-action="rich-note" data-placeholder="오늘 매매 전후 생각, 실수, 배운 점을 적어보세요." title="창 오른쪽 아래를 잡아 크기를 조절할 수 있습니다. 더블클릭하면 큰 팝업 기록창이 열립니다.">${renderRichContent(record.noteHtml, record.noteText)}</div>
+              <canvas class="note-draw-canvas" data-action="note-draw-canvas" data-date="${esc(selectedDate)}"></canvas>
+            </div>
+          </aside>
+        </section>
       `;
       saveApp();
     }
@@ -2521,7 +2924,7 @@
           <div>${items.length ? items.map((it, idx) => `
             <div class="task-row ${it.done ? 'done' : ''}">
               <input type="checkbox" ${it.done ? 'checked' : ''} data-action="task-done" data-type="${esc(type)}" data-index="${idx}" aria-label="완료" />
-              <input type="text" value="${esc(it.text)}" data-action="task-text" data-type="${esc(type)}" data-index="${idx}" placeholder="한 줄 입력" />
+              <div class="rich-editor today-item-editor" contenteditable="true" spellcheck="false" data-action="task-rich-text" data-type="${esc(type)}" data-index="${idx}" data-placeholder="한 줄 입력">${renderRichContent(it.textHtml || '', it.text || '')}</div>
               <button class="btn-small btn-danger" data-action="delete-task" data-type="${esc(type)}" data-index="${idx}">삭제</button>
             </div>`).join('') : '<div class="empty">아직 입력된 내용이 없습니다.</div>'}</div>
         </div>`;
@@ -2535,8 +2938,8 @@
           <div class="section-title"><h3>관심종목</h3><button class="btn-small btn-primary" data-action="add-watch">+ 추가</button></div>
           <div>${items.length ? items.map((it, idx) => `
             <div class="watch-row">
-              <input type="text" value="${esc(it.name)}" data-action="watch-name" data-index="${idx}" placeholder="종목명" />
-              <input type="text" value="${esc(it.reason)}" data-action="watch-reason" data-index="${idx}" placeholder="관심 이유 / 가격대" />
+              <div class="rich-editor watch-item-editor" contenteditable="true" spellcheck="false" data-action="watch-rich-name" data-index="${idx}" data-placeholder="종목명">${renderRichContent(it.nameHtml || '', it.name || '')}</div>
+              <div class="rich-editor watch-item-editor" contenteditable="true" spellcheck="false" data-action="watch-rich-reason" data-index="${idx}" data-placeholder="관심 이유 / 가격대">${renderRichContent(it.reasonHtml || '', it.reason || '')}</div>
               <button class="btn-small btn-danger" data-action="delete-watch" data-index="${idx}">삭제</button>
             </div>`).join('') : '<div class="empty">관심종목을 추가해 보세요.</div>'}</div>
         </div>`;
@@ -3683,7 +4086,7 @@
             <h4>기존 이력내용 수정</h4>
             ${opts.metaHtml || ''}
             ${renderFormatToolbarInline()}
-            <div id="detailMainEditor" class="rich-editor memo-rich-editor" contenteditable="true" data-placeholder="기존 내용을 수정하거나 펜메모, 그림, 링크, 서식을 추가하세요.">${mainHtml}</div>
+            <div id="detailMainEditor" class="rich-editor memo-rich-editor" contenteditable="true" spellcheck="false" data-placeholder="기존 내용을 수정하거나 펜메모, 그림, 링크, 서식을 추가하세요.">${mainHtml}</div>
             <div class="modal-actions">
               ${modalDetailMainContext ? '<button class="btn-primary" data-action="save-detail-main">기존내용 저장</button>' : ''}
             </div>
@@ -3692,7 +4095,7 @@
             <h4>추가 기록</h4>
             <div id="detailExtraList">${renderDetailExtraList(storeName, key)}</div>
             ${renderFormatToolbarInline()}
-            <div id="detailExtraEditor" class="rich-editor detail-extra-editor" contenteditable="true" data-placeholder="이 상세내용에 추가로 기록할 내용을 입력하세요."></div>
+            <div id="detailExtraEditor" class="rich-editor detail-extra-editor" contenteditable="true" spellcheck="false" data-placeholder="이 상세내용에 추가로 기록할 내용을 입력하세요."></div>
             <div class="modal-actions">
               <button class="btn-primary" data-action="save-detail-extra" data-store="${esc(storeName)}" data-key="${esc(key)}">추가기록 저장</button>
               <button data-action="close-modal">닫기</button>
@@ -3827,7 +4230,7 @@
                   <button class="btn-small btn-primary" data-action="add-extra-note">추가기록 저장</button>
                 </div>
                 ${renderFormatToolbarInline()}
-                <div id="extraNoteEditor" class="rich-editor" contenteditable="true" data-placeholder="오늘의 기록 외에 따로 남길 내용을 입력하세요. 드래그 후 상단 서식 도구를 사용할 수 있습니다."></div>
+                <div id="extraNoteEditor" class="rich-editor" contenteditable="true" spellcheck="false" data-placeholder="오늘의 기록 외에 따로 남길 내용을 입력하세요. 드래그 후 상단 서식 도구를 사용할 수 있습니다."></div>
               </div>
               <div class="toolbar history-filter">
                 <div class="field wide"><label for="noteHistorySearch">단어검색</label><input id="noteHistorySearch" type="search" value="${esc(dailyHistoryState.noteSearch)}" data-action="daily-search" data-section="note" placeholder="제목, 내용, 날짜 검색" /></div>
@@ -4661,6 +5064,9 @@
           <button class="quick-format-btn" data-action="insert-rich-link">링크</button>
           <button class="quick-format-btn" data-action="pick-rich-image">그림</button>
           <button class="quick-format-btn" data-action="open-handwrite">펜메모</button>
+          <label class="tiny">노트펜</label><input class="note-draw-color" type="color" value="#d93025" data-action="note-draw-color" title="노트 위에 쓰는 펜 색" />
+          <button class="quick-format-btn" data-action="toggle-note-draw">노트위펜</button>
+          <button class="quick-format-btn" data-action="clear-note-draw">펜선삭제</button>
           ${renderRecentFormatButtons()}
         </div>
         <details class="format-detail-box"><summary>상세서식 열기</summary><div class="format-detail-inner">
@@ -4688,7 +5094,7 @@
           <button class="btn-small" data-action="close-modal">닫기</button>
         </div>
         ${renderFormatToolbarInline()}
-        <div id="bigMemo" class="rich-editor memo-rich-editor" contenteditable="true" data-placeholder="이 날짜의 종목 메모를 기록하세요. 글자를 드래그한 뒤 Backspace/Delete로 삭제할 수 있습니다.">${renderRichContent(existingHtml, memoOf(account, code, date, source))}</div>
+        <div id="bigMemo" class="rich-editor memo-rich-editor" contenteditable="true" spellcheck="false" data-placeholder="이 날짜의 종목 메모를 기록하세요. 글자를 드래그한 뒤 Backspace/Delete로 삭제할 수 있습니다.">${renderRichContent(existingHtml, memoOf(account, code, date, source))}</div>
         <div class="hint">상단의 링크 삽입·그림 삽입 버튼 사용 가능 · 드래그 후 Backspace/Delete 삭제 · Ctrl+Enter 저장 · ESC 닫기</div>
         <div class="modal-actions">
           <button data-action="close-modal">취소</button>
@@ -4715,6 +5121,7 @@
     function openTodayNotePopup(date = selectedDate) {
       const r = ensureRecord(date);
       modalDetailMainContext = { kind: 'todayNote', date };
+      modalContent.classList.add('today-note-modal');
       modalContent.innerHTML = `
         <div class="modal-head">
           <div>
@@ -4724,7 +5131,10 @@
           <button class="btn-small" data-action="close-modal">닫기</button>
         </div>
         ${renderFormatToolbarInline()}
-        <div id="todayNotePopupEditor" class="rich-editor memo-rich-editor" contenteditable="true" data-placeholder="오늘의 기록 노트를 크게 열어 수정하세요.">${renderRichContent(r.noteHtml, r.noteText)}</div>
+        <div class="note-draw-wrapper ${r.noteDrawData ? 'has-drawing' : ''}" data-note-draw-wrapper="popup" data-date="${esc(date)}">
+          <div id="todayNotePopupEditor" class="rich-editor memo-rich-editor" contenteditable="true" spellcheck="false" data-placeholder="오늘의 기록 노트를 크게 열어 수정하세요.">${renderRichContent(r.noteHtml, r.noteText)}</div>
+          <canvas class="note-draw-canvas" data-action="note-draw-canvas" data-date="${esc(date)}"></canvas>
+        </div>
         <div class="hint">글자를 드래그한 뒤 서식을 적용하거나, 펜메모/그림/링크를 삽입할 수 있습니다. Ctrl+Enter 저장 · ESC 닫기</div>
         <div class="modal-actions">
           <button data-action="close-modal">취소</button>
@@ -4732,12 +5142,13 @@
         </div>
       `;
       modalBackdrop.classList.add('open');
-      setTimeout(() => document.getElementById('todayNotePopupEditor')?.focus(), 0);
+      setTimeout(() => { initNoteDrawCanvases(); disableSpellcheck(); document.getElementById('todayNotePopupEditor')?.focus(); }, 0);
     }
 
     function saveTodayNotePopup() {
       const ctx = modalDetailMainContext && modalDetailMainContext.kind === 'todayNote' ? modalDetailMainContext : { date: selectedDate };
       const editor = document.getElementById('todayNotePopupEditor');
+      saveVisibleNoteDrawData(ctx.date || selectedDate);
       const html = cleanHtml(editor?.innerHTML || '');
       const text = editor?.innerText || plainFromHtml(html);
       const r = ensureRecord(ctx.date || selectedDate);
@@ -4840,6 +5251,7 @@
 
     function closeModal() {
       modalBackdrop.classList.remove('open');
+      modalContent.classList.remove('today-note-modal');
       modalContent.innerHTML = '';
       modalMemoContext = null;
       modalDetailMainContext = null;
@@ -4971,14 +5383,320 @@
       wrapSelectionWithStyle({ fontFamily: p.fontFamily, fontSize: p.fontSize, color: p.textColor, backgroundColor: p.highlightColor });
     }
 
+
+    function disableSpellcheck() {
+      document.querySelectorAll('input, textarea, [contenteditable="true"]').forEach(el => {
+        try {
+          el.setAttribute('spellcheck', 'false');
+          el.setAttribute('autocomplete', el.getAttribute('autocomplete') || 'off');
+        } catch (e) { /* ignore */ }
+      });
+    }
+
+    function focusContenteditableEnd(el) {
+      if (!el) return;
+      el.focus();
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      const sel = window.getSelection();
+      if (sel) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+
+    function focusPendingTodayEditor() {
+      if (!pendingTodayFocus) return;
+      const selector = pendingTodayFocus;
+      pendingTodayFocus = null;
+      const el = document.querySelector(selector);
+      focusContenteditableEnd(el);
+    }
+
+    function syncTodayTaskEditor(el) {
+      if (!el || el.dataset.action !== 'task-rich-text') return;
+      const record = ensureRecord(selectedDate);
+      const type = el.dataset.type;
+      const idx = Number(el.dataset.index);
+      if (!record[type] || !record[type][idx]) return;
+      const html = cleanHtml(el.innerHTML || '');
+      const text = el.innerText || plainFromHtml(html);
+      record[type][idx].textHtml = html;
+      record[type][idx].text = text.replace(/[\r\n]+/g, ' ').trim();
+      saveApp();
+    }
+
+    function syncTodayWatchEditor(el) {
+      if (!el || !['watch-rich-name', 'watch-rich-reason'].includes(el.dataset.action)) return;
+      const record = ensureRecord(selectedDate);
+      const idx = Number(el.dataset.index);
+      record.watch = Array.isArray(record.watch) ? record.watch : [];
+      if (!record.watch[idx]) return;
+      const html = cleanHtml(el.innerHTML || '');
+      const text = el.innerText || plainFromHtml(html);
+      if (el.dataset.action === 'watch-rich-name') {
+        record.watch[idx].nameHtml = html;
+        record.watch[idx].name = text.replace(/[\r\n]+/g, ' ').trim();
+      } else {
+        record.watch[idx].reasonHtml = html;
+        record.watch[idx].reason = text.replace(/[\r\n]+/g, ' ').trim();
+      }
+      saveApp();
+    }
+
+    function addTaskAfterEnter(type, index) {
+      const record = ensureRecord(selectedDate);
+      record[type] = Array.isArray(record[type]) ? record[type] : [];
+      const nextIndex = Number(index) + 1;
+      record[type].splice(nextIndex, 0, { done: false, text: '', textHtml: '' });
+      pendingTodayFocus = `[data-action="task-rich-text"][data-type="${cssEscape(type)}"][data-index="${nextIndex}"]`;
+      saveApp();
+      render();
+    }
+
+    function addWatchAfterEnter(index) {
+      const record = ensureRecord(selectedDate);
+      record.watch = Array.isArray(record.watch) ? record.watch : [];
+      const nextIndex = Number(index) + 1;
+      record.watch.splice(nextIndex, 0, { name: '', nameHtml: '', reason: '', reasonHtml: '' });
+      pendingTodayFocus = `[data-action="watch-rich-name"][data-index="${nextIndex}"]`;
+      saveApp();
+      render();
+    }
+
+    function handleTodayRichEnter(target) {
+      if (!target || !target.dataset) return false;
+      const action = target.dataset.action;
+      if (action === 'task-rich-text') {
+        syncTodayTaskEditor(target);
+        addTaskAfterEnter(target.dataset.type, target.dataset.index);
+        return true;
+      }
+      if (action === 'watch-rich-name') {
+        syncTodayWatchEditor(target);
+        const record = ensureRecord(selectedDate);
+        const idx = Number(target.dataset.index);
+        const item = record.watch[idx] || {};
+        const reasonEl = document.querySelector(`[data-action="watch-rich-reason"][data-index="${idx}"]`);
+        if (!String(item.reason || '').trim() && reasonEl) {
+          focusContenteditableEnd(reasonEl);
+        } else {
+          addWatchAfterEnter(idx);
+        }
+        return true;
+      }
+      if (action === 'watch-rich-reason') {
+        syncTodayWatchEditor(target);
+        addWatchAfterEnter(target.dataset.index);
+        return true;
+      }
+      return false;
+    }
+
+    function getNoteWrapperFromButton(button) {
+      const active = document.activeElement && document.activeElement.closest ? document.activeElement.closest('.note-draw-wrapper') : null;
+      if (active) return active;
+      const selected = savedSelectionRange ? editableRootFromRange(savedSelectionRange)?.closest('.note-draw-wrapper') : null;
+      if (selected) return selected;
+      const modal = button?.closest?.('.modal');
+      if (modal) return modal.querySelector('.note-draw-wrapper');
+      return root.querySelector('.note-draw-wrapper') || document.querySelector('.note-draw-wrapper');
+    }
+
+    function getNoteDrawRecordDate(wrapper) {
+      return wrapper?.dataset?.date || selectedDate;
+    }
+
+    function noteCanvasIsBlank(canvas) {
+      if (!canvas) return true;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] > 2) return false;
+      }
+      return true;
+    }
+
+    function saveNoteDrawDataFromCanvas(canvas) {
+      const wrapper = canvas?.closest?.('.note-draw-wrapper');
+      if (!wrapper) return;
+      const date = getNoteDrawRecordDate(wrapper);
+      const record = ensureRecord(date);
+      if (noteCanvasIsBlank(canvas)) {
+        record.noteDrawData = '';
+        wrapper.classList.remove('has-drawing');
+      } else {
+        record.noteDrawData = canvas.toDataURL('image/png');
+        wrapper.classList.add('has-drawing');
+      }
+      saveApp();
+    }
+
+    function saveVisibleNoteDrawData(date = selectedDate) {
+      document.querySelectorAll(`.note-draw-canvas[data-date="${cssEscape(date)}"]`).forEach(canvas => saveNoteDrawDataFromCanvas(canvas));
+    }
+
+    function loadNoteDrawToCanvas(canvas) {
+      const wrapper = canvas?.closest?.('.note-draw-wrapper');
+      if (!wrapper) return;
+      const rect = wrapper.getBoundingClientRect();
+      const width = Math.max(1, Math.round(rect.width));
+      const height = Math.max(1, Math.round(rect.height));
+      const existingData = ensureRecord(getNoteDrawRecordDate(wrapper)).noteDrawData || '';
+      if (canvas.width !== width || canvas.height !== height) {
+        canvas.width = width;
+        canvas.height = height;
+      }
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (existingData) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          wrapper.classList.add('has-drawing');
+        };
+        img.src = existingData;
+      } else {
+        wrapper.classList.remove('has-drawing');
+      }
+    }
+
+    function initNoteDrawCanvases() {
+      document.querySelectorAll('.note-draw-canvas').forEach(canvas => {
+        loadNoteDrawToCanvas(canvas);
+        if (canvas.dataset.ready === '1') return;
+        canvas.dataset.ready = '1';
+        canvas.addEventListener('pointerdown', startNoteDrawStroke);
+        canvas.addEventListener('pointermove', moveNoteDrawStroke);
+        canvas.addEventListener('pointerup', endNoteDrawStroke);
+        canvas.addEventListener('pointercancel', endNoteDrawStroke);
+        canvas.addEventListener('pointerleave', endNoteDrawStroke);
+      });
+    }
+
+    function setNoteDrawColorFromButton(button) {
+      const input = button?.closest?.('.inline-format-toolbar')?.querySelector('.note-draw-color');
+      noteDrawState.color = input?.value || noteDrawState.color || '#d93025';
+    }
+
+    function toggleNoteDraw(button) {
+      const wrapper = getNoteWrapperFromButton(button);
+      if (!wrapper) { alert('오늘의 기록 노트창에서 사용할 수 있습니다.'); return; }
+      setNoteDrawColorFromButton(button);
+      initNoteDrawCanvases();
+      const active = wrapper.classList.toggle('drawing');
+      const editor = wrapper.querySelector('.rich-editor');
+      if (active) {
+        editor?.blur?.();
+        toast('노트 위 펜쓰기 ON · 노트 위에 직접 그리세요');
+      } else {
+        const canvas = wrapper.querySelector('.note-draw-canvas');
+        saveNoteDrawDataFromCanvas(canvas);
+        toast('노트 위 펜쓰기 저장 완료');
+      }
+    }
+
+    function clearNoteDraw(button) {
+      const wrapper = getNoteWrapperFromButton(button);
+      const canvas = wrapper?.querySelector?.('.note-draw-canvas');
+      if (!canvas) { alert('지울 노트 펜선이 없습니다.'); return; }
+      if (!confirm('노트 위에 그린 펜선을 모두 지울까요? 글자 내용은 그대로 유지됩니다.')) return;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const record = ensureRecord(getNoteDrawRecordDate(wrapper));
+      record.noteDrawData = '';
+      wrapper.classList.remove('has-drawing', 'drawing');
+      saveApp();
+      toast('노트 펜선 삭제 완료');
+    }
+
+    function notePoint(e, canvas) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: (e.clientX - rect.left) * (canvas.width / rect.width), y: (e.clientY - rect.top) * (canvas.height / rect.height) };
+    }
+
+    function startNoteDrawStroke(e) {
+      const canvas = e.currentTarget;
+      const wrapper = canvas.closest('.note-draw-wrapper');
+      if (!wrapper?.classList.contains('drawing')) return;
+      e.preventDefault();
+      noteDrawState.activeCanvas = canvas;
+      noteDrawState.drawing = true;
+      noteDrawState.lastPoint = notePoint(e, canvas);
+      canvas.setPointerCapture?.(e.pointerId);
+    }
+
+    function moveNoteDrawStroke(e) {
+      const canvas = noteDrawState.activeCanvas;
+      if (!noteDrawState.drawing || canvas !== e.currentTarget || !noteDrawState.lastPoint) return;
+      e.preventDefault();
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      const p = notePoint(e, canvas);
+      ctx.save();
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = noteDrawState.color || '#d93025';
+      ctx.lineWidth = noteDrawState.size || 3;
+      ctx.beginPath();
+      ctx.moveTo(noteDrawState.lastPoint.x, noteDrawState.lastPoint.y);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      ctx.restore();
+      noteDrawState.lastPoint = p;
+    }
+
+    function endNoteDrawStroke(e) {
+      if (!noteDrawState.drawing) return;
+      e?.preventDefault?.();
+      const canvas = noteDrawState.activeCanvas;
+      noteDrawState.drawing = false;
+      noteDrawState.lastPoint = null;
+      if (canvas) saveNoteDrawDataFromCanvas(canvas);
+    }
+
+    function handwriteCanvasIsBlankWhite() {
+      if (!handwriteCanvas || !handwriteCtx) return true;
+      const data = handwriteCtx.getImageData(0, 0, handwriteCanvas.width, handwriteCanvas.height).data;
+      for (let i = 0; i < data.length; i += 16) {
+        const r = data[i], g = data[i + 1], b = data[i + 2], a = data[i + 3];
+        if (a > 5 && !(r > 246 && g > 246 && b > 246)) return false;
+      }
+      return true;
+    }
+
+    function deleteHandwriteEditImage() {
+      if (!handwriteEditImage) return false;
+      const wrap = handwriteEditImage.closest('.resizable-img-wrap');
+      if (wrap) wrap.remove();
+      handwriteEditImage = null;
+      selectedHanddrawWrap = null;
+      syncRichEditors();
+      toast('펜메모 삭제 완료');
+      closeHandwritePad();
+      return true;
+    }
+
+    function selectHanddrawWrap(wrap) {
+      document.querySelectorAll('.selected-handdraw').forEach(el => el.classList.remove('selected-handdraw'));
+      selectedHanddrawWrap = wrap || null;
+      if (selectedHanddrawWrap) selectedHanddrawWrap.classList.add('selected-handdraw');
+    }
+
     function syncRichEditors() {
       const note = document.getElementById('noteText');
       if (note && note.dataset.action === 'rich-note') {
         const r = ensureRecord(selectedDate);
         r.noteHtml = cleanHtml(note.innerHTML);
         r.noteText = note.innerText || '';
+        saveVisibleNoteDrawData(selectedDate);
         saveApp();
       }
+      document.querySelectorAll('[data-action="task-rich-text"]').forEach(el => syncTodayTaskEditor(el));
+      document.querySelectorAll('[data-action="watch-rich-name"], [data-action="watch-rich-reason"]').forEach(el => syncTodayWatchEditor(el));
     }
 
     function getCurrentRichEditor() {
@@ -5082,7 +5800,14 @@
       if (!handwriteCtx) initHandwriteCanvas();
       clearHandwriteCanvas(true);
       handwriteUndoStack = [];
+      const penColor = document.getElementById('handwriteColor');
+      const highlightColor = document.getElementById('handwriteHighlightColor');
+      const sizeEl = document.getElementById('handwriteSize');
+      if (penColor && !penColor.value) penColor.value = '#d93025';
+      if (highlightColor && !highlightColor.value) highlightColor.value = '#fff176';
+      if (sizeEl && !sizeEl.value) sizeEl.value = '5';
       setHandwriteMode('pen');
+      handwriteBackdrop?.classList.toggle('editing', !!editImage);
       handwriteBackdrop?.classList.add('open');
       if (editImage && editImage.src) {
         const img = new Image();
@@ -5106,11 +5831,21 @@
       handwriteDrawing = false;
       handwriteLastPoint = null;
       handwriteBackdrop?.classList.remove('open');
+      handwriteBackdrop?.classList.remove('editing');
       handwriteEditImage = null;
     }
 
     function setHandwriteMode(mode) {
       handwriteMode = mode || 'pen';
+      const penColor = document.getElementById('handwriteColor');
+      const highlightColor = document.getElementById('handwriteHighlightColor');
+      const sizeEl = document.getElementById('handwriteSize');
+      if (penColor && !penColor.value) penColor.value = '#d93025';
+      if (highlightColor && !highlightColor.value) highlightColor.value = '#fff176';
+      if (sizeEl) {
+        if (handwriteMode === 'highlighter' && Number(sizeEl.value || 0) < 10) sizeEl.value = '14';
+        if (handwriteMode === 'pen' && Number(sizeEl.value || 0) > 12) sizeEl.value = '5';
+      }
       document.querySelectorAll('[data-action="handwrite-mode"]').forEach(btn => btn.classList.toggle('active', btn.dataset.mode === handwriteMode));
     }
 
@@ -5153,6 +5888,7 @@
       e.preventDefault();
       const p = pointOnHandwriteCanvas(e);
       const colorEl = document.getElementById('handwriteColor');
+      const highlightColorEl = document.getElementById('handwriteHighlightColor');
       const sizeEl = document.getElementById('handwriteSize');
       const size = Math.max(1, Number(sizeEl?.value || 5));
       handwriteCtx.save();
@@ -5163,7 +5899,7 @@
       } else if (handwriteMode === 'highlighter') {
         handwriteCtx.globalCompositeOperation = 'source-over';
         handwriteCtx.globalAlpha = .34;
-        handwriteCtx.strokeStyle = colorEl?.value || '#fff176';
+        handwriteCtx.strokeStyle = highlightColorEl?.value || '#fff176';
         handwriteCtx.lineWidth = size * 2.4;
       } else {
         handwriteCtx.globalCompositeOperation = 'source-over';
@@ -5190,6 +5926,10 @@
       if (!handwriteCanvas) return;
       const dataUrl = handwriteCanvas.toDataURL('image/png');
       if (handwriteEditImage) {
+        if (handwriteCanvasIsBlankWhite()) {
+          deleteHandwriteEditImage();
+          return;
+        }
         handwriteEditImage.src = dataUrl;
         syncRichEditors();
         toast('손글씨 그림 수정 완료');
@@ -5240,13 +5980,25 @@
     });
 
     document.addEventListener('click', (e) => {
+      const clickedHanddraw = e.target.closest && e.target.closest('.handdraw-wrap');
+      if (clickedHanddraw && !e.target.closest('[data-action]')) {
+        selectHanddrawWrap(clickedHanddraw);
+        saveCurrentRichSelection();
+        return;
+      }
+      if (!clickedHanddraw) selectHanddrawWrap(null);
       const el = e.target.closest('[data-action], .tab-btn');
       if (!el) return;
       const action = el.dataset.action;
       if (el.classList.contains('tab-btn')) { currentTab = el.dataset.tab; try { render(); } catch (err) { console.error(err); } return; }
+      if (action === 'manual-recover-data') { manualRecoverData(); return; }
       if (action === 'add-task') {
         const record = ensureRecord(selectedDate);
-        record[el.dataset.type].push({ done: false, text: '' });
+        const type = el.dataset.type;
+        record[type] = Array.isArray(record[type]) ? record[type] : [];
+        const idx = record[type].length;
+        record[type].push({ done: false, text: '', textHtml: '' });
+        pendingTodayFocus = `[data-action="task-rich-text"][data-type="${cssEscape(type)}"][data-index="${idx}"]`;
         saveApp(); render();
       }
       if (action === 'delete-task') {
@@ -5256,7 +6008,10 @@
       }
       if (action === 'add-watch') {
         const record = ensureRecord(selectedDate);
-        record.watch.push({ name: '', reason: '' });
+        record.watch = Array.isArray(record.watch) ? record.watch : [];
+        const idx = record.watch.length;
+        record.watch.push({ name: '', nameHtml: '', reason: '', reasonHtml: '' });
+        pendingTodayFocus = `[data-action="watch-rich-name"][data-index="${idx}"]`;
         saveApp(); render();
       }
       if (action === 'delete-watch') {
@@ -5315,10 +6070,14 @@
       if (action === 'insert-rich-link') insertRichLink();
       if (action === 'pick-rich-image') document.getElementById('recordImageFile')?.click();
       if (action === 'open-handwrite') openHandwritePad();
+      if (action === 'toggle-note-draw') toggleNoteDraw(el);
+      if (action === 'clear-note-draw') clearNoteDraw(el);
+      if (action === 'note-draw-color') noteDrawState.color = el.value || '#d93025';
       if (action === 'close-handwrite') closeHandwritePad();
       if (action === 'handwrite-mode') setHandwriteMode(el.dataset.mode);
       if (action === 'handwrite-undo') undoHandwrite();
       if (action === 'handwrite-clear') { pushHandwriteUndo(); clearHandwriteCanvas(true); }
+      if (action === 'handwrite-delete-image') deleteHandwriteEditImage();
       if (action === 'handwrite-insert') insertHandwriteIntoEditor();
       if (action === 'add-account') addAccount();
       if (action === 'toggle-upload-account') toggleUploadAccount(el.dataset.account, el.checked);
@@ -5413,6 +6172,9 @@
       if (el.dataset.action === 'daily-history-check') {
         setDailyHistoryChecked(el.dataset.dailyType, el.dataset.rowId, el.checked);
       }
+      if (el.dataset.action === 'note-draw-color') {
+        noteDrawState.color = el.value || '#d93025';
+      }
       if (el.dataset.action === 'change-ui-style') {
         setUiStyle(el.dataset.styleKey, el.value);
       }
@@ -5444,11 +6206,21 @@
 
     document.addEventListener('input', (e) => {
       const el = e.target;
+      if (el.dataset.action === 'note-draw-color') {
+        noteDrawState.color = el.value || '#d93025';
+      }
       if (el.id === 'noteText' && el.dataset.action === 'rich-note') {
         const r = ensureRecord(selectedDate);
         r.noteHtml = cleanHtml(el.innerHTML);
         r.noteText = el.innerText || '';
+        saveVisibleNoteDrawData(selectedDate);
         saveApp();
+      }
+      if (el.dataset.action === 'task-rich-text') {
+        syncTodayTaskEditor(el);
+      }
+      if (el.dataset.action === 'watch-rich-name' || el.dataset.action === 'watch-rich-reason') {
+        syncTodayWatchEditor(el);
       }
       if (el.dataset.action === 'task-text') {
         const record = ensureRecord(selectedDate);
@@ -5497,11 +6269,20 @@
       if (e.key === 'Enter' && e.target && e.target.id === 'newAccountName') { e.preventDefault(); addAccount(); return; }
       if (e.key === 'Enter') {
         const action = e.target.dataset?.action;
+        if (handleTodayRichEnter(e.target)) { e.preventDefault(); return; }
         if (['task-text','watch-name','watch-reason'].includes(action)) e.preventDefault();
         if (action === 'rename-account') {
           e.preventDefault();
           renameAccount(e.target.dataset.oldAccount, e.target.value);
         }
+      }
+      if ((e.key === 'Backspace' || e.key === 'Delete') && selectedHanddrawWrap) {
+        e.preventDefault();
+        selectedHanddrawWrap.remove();
+        selectedHanddrawWrap = null;
+        syncRichEditors();
+        toast('펜메모 삭제 완료');
+        return;
       }
       if ((e.key === 'Backspace' || e.key === 'Delete') && e.target && e.target.closest && e.target.closest('.rich-editor[contenteditable="true"]')) {
         const editor = e.target.closest('.rich-editor[contenteditable="true"]');
