@@ -1289,7 +1289,8 @@
         localStorage.setItem(CLOUD_SETTINGS_KEY, JSON.stringify({
           url: String(settings.url || '').trim(),
           anonKey: String(settings.anonKey || '').trim(),
-          email: String(settings.email || '').trim()
+          email: String(settings.email || '').trim(),
+          password: String(settings.password || '')
         }));
       } catch (e) {
         console.warn('클라우드 설정 저장 실패', e);
@@ -1301,9 +1302,11 @@
       const url = document.getElementById('cloudSupabaseUrl');
       const key = document.getElementById('cloudSupabaseAnonKey');
       const email = document.getElementById('cloudEmail');
+      const password = document.getElementById('cloudPassword');
       if (url && !url.value) url.value = s.url || '';
       if (key && !key.value) key.value = s.anonKey || '';
       if (email && !email.value) email.value = s.email || '';
+      if (password && !password.value) password.value = s.password || '';
       updateCloudStatus();
     }
 
